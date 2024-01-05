@@ -11,6 +11,7 @@
 	Please note this library is derived from Adafruits ADS1015/ADS1115 library.
 */
 /**************************************************************************/
+#pragma once
 
 #if ARDUINO >= 100
  #include "Arduino.h"
