@@ -122,6 +122,7 @@
     -----------------------------------------------------------------------*/	
 	
 	const uint8_t INPUT_PULLDOWN = 0x03;
+	const uint16_t INT_ERR = 0x00FF;
 /*=========================================================================*/
 
 
@@ -130,12 +131,17 @@ class PCAL6524
 protected:
  uint8_t m_i2cAddress;
  
- public:
+public:
   PCAL6524(uint8_t i2cAddress = PCAL6524_ADDRESS_2);  //Default address = 
   void begin(void);
   void remotepinMode(uint16_t pin, uint8_t mode);
   uint8_t remotedigitalRead(uint16_t pin);
   void remotedigitalWrite(uint16_t pin, uint8_t mode);
+  void pinSetInterruptEnabled(uint16_t pin, bool enabled);
+  uint16_t getLastInterruptPin();
+  uint8_t getInterruptPinValue();
 
- private:
+private:
+  uint8_t pca_bitRead(uint_8 intf, int bit);
+  uint16_t convertNumberToPin(uint8_t pin_no);
 };

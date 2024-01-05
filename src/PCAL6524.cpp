@@ -303,4 +303,139 @@ if (pin == P0_0 || pin == P0_1 || pin == P0_2 || pin == P0_3 || pin == P0_4 || p
 		}
 	}
 }
- 
+
+void PCAL6254::pinSetInterruptEnabled(uin16_t pin, bool enabled)
+{
+	uint8_t interrupt_mask_reg_data;
+	uint8_t PCAL6524_INTERRUPT_PORT;
+	
+	//Determine wich bank of pins the requested pin is in
+	if (pin == P0_0 || pin == P0_1|| pin == P0_2 || pin == P0_3 || pin == P0_4 || pin == P0_5 || pin == P0_6 || pin == P0_7)
+	{
+		PCAL6524_INTERRUPT_PORT = PCAL6524_INTERRUPT_MASK_PORT_0;
+	}
+	else if (pin == P1_0 || pin == P1_1 || pin == P1_2 || pin == P1_3 || pin == P1_4 || pin == P1_5 || pin == P1_6 || pin == P1_7)
+	{
+		PCAL6524_INTERRUPT_PORT = PCAL6524_INTERRUPT_MASK_PORT_1;
+	}
+	else if (pin == P2_0 || pin == P2_1 || pin == P2_2 || pin == P2_3 || pin == P2_4 || pin == P2_5 || pin == P2_6 || pin == P2_7)
+	{
+		PCAL6524_INTERRUPT_PORT = PCAL6524_INTERRUPT_MASK_PORT_2;
+	}
+
+	//Read the current Value of the interrupt mask register
+	interrupt_mask_reg_data = readRegister(m_i2cAddress, PCAL6524_INTERRUPT_PORT);
+	if (enabled == false)
+	{
+		interrupt_mask_reg_data = interrupt_mask_reg_data | (uint8_t)pin;
+		writeRegister(m_i2cAddress, PCAL6524_INTERRUPT_PORT, interrupt_mask_reg_data);
+		return;
+	}
+	else if (enabled == true){
+		interrupt_mask_reg_data = interrupt_mask_reg_data & ~((uint8_t)pin);
+		writeRegister(m_i2cAddress, PCAL6524_INTERRUPT_PORT, interrupt_mask_reg_data);
+		return;
+	}
+} 
+
+uint16_t PCAL6254::getLastInterruptPin()
+{
+	uint8_t intf;
+
+	intf = readRegister(m_i2cAddress, PCAL6524_INTERRUPT_STATUS_PORT_0);
+	for (int i = 0; i < 8; i++) {
+		if (pca_bitRead(intf, i))
+		{
+			return convertNumberToPin(i);
+		}
+	}
+	intf = readRegister(m_i2cAddress, PCAL6524_INTERRUPT_STATUS_PORT_1);
+	for (int i = 0; i < 8; i++)
+	{
+		if (pca_bitRead(intf, i))
+		{
+			return convertNumberToPin(i + 8);
+		}
+	}
+	intf = readRegister(m_i2cAddress, PCAL6524_INTERRUPT_STATUS_PORT_2);
+	for (int i = 0; i < 8; i++)
+	{
+		if (pca_bitRead(intf, i))
+		{
+			return convertNumberToPin(i + 16);
+		}
+	}
+	return INT_ERR;
+}
+
+uint8_t PCAL6524::getInterruptPinValue()
+{
+	uint16_t intPin = getInterruptPinValue();
+	if (intPin != INT_ERR)
+	{
+		return remotedigitalRead(intPin);
+	}
+	return (uint8_t) INT_ERR;
+}
+
+uint8_t PCAL6524::pca_bitRead(uint8_t value, int bit)
+{
+	return (((value) >> (bit)) & 0x01);
+}
+
+uint16_t PCAL6524::convertNumberToPin(uint8_t pin_no)
+{
+	switch (pin_no)
+	{
+	case 0:
+		return P0_0;
+	case 1:
+		return P0_1;
+	case 2:
+		return P0_2;
+	case 3:
+		return P0_3;
+	case 4:
+		return P0_4;
+	case 5:
+		return P0_5;
+	case 6:
+		return P0_6;
+	case 7:
+		return P0_7;
+	case 8:
+		return P1_0;
+	case 9:
+		return P1_1;
+	case 10:
+		return P1_2;
+	case 11:
+		return P1_3;
+	case 12:
+		return P1_4;
+	case 13:
+		return P1_5;
+	case 14:
+		return P1_6;
+	case 15:
+		return P1_7;
+	case 16:
+		return P2_0;
+	case 17:
+		return P2_1;
+	case 18:
+		return P2_2;
+	case 19:
+		return P2_3;
+	case 20:
+		return P2_4;
+	case 21:
+		return P2_5;
+	case 22:
+		return P2_6;
+	case 23:
+		return P2_7;
+	default:
+		return 0xFFFF;
+	}
+}
