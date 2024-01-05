@@ -122,7 +122,9 @@
     Additinal Value
     -----------------------------------------------------------------------*/	
 	
+	#ifndef INPUT_PULLDOWN
 	const uint8_t INPUT_PULLDOWN = 0x03;
+	#endif
 	const uint16_t INT_ERR = 0x00FF;
 /*=========================================================================*/
 
@@ -143,6 +145,6 @@ public:
   uint8_t getInterruptPinValue();
 
 private:
-  uint8_t pca_bitRead(uint_8 intf, int bit);
+  uint8_t pca_bitRead(uint8_t intf, int bit);
   uint16_t convertNumberToPin(uint8_t pin_no);
 };
