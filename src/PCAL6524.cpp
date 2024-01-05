@@ -304,7 +304,7 @@ if (pin == P0_0 || pin == P0_1 || pin == P0_2 || pin == P0_3 || pin == P0_4 || p
 	}
 }
 
-void PCAL6524::pinSetInterruptEnabled(uin16_t pin, bool enabled)
+void PCAL6524::pinSetInterruptEnabled(uint16_t pin, bool enabled)
 {
 	uint8_t interrupt_mask_reg_data;
 	uint8_t PCAL6524_INTERRUPT_PORT;
